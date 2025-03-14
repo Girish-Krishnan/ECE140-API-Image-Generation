@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        img {
+            margin-top: 20px;
+            max-width: 90%;
+            border: 2px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generate an AI Image</h1>
+    <input type="text" id="promptInput" placeholder="Enter a prompt">
+    <button onclick="generateImage()">Generate</button>
+    <br>
+    <img id="generatedImage" style="display: none;">
+
+    <script>
+        async function generateImage() {
+            const prompt = document.getElementById("promptInput").value;
+            if (!prompt) {
+                alert("Please enter a prompt!");
+                return;
+            }
+
+            // Call the FastAPI backend
+            const response = await fetch(`/generate-image?prompt=${encodeURIComponent(prompt)}`);
+            
+            if (!response.ok) {
+                alert("Failed to generate image. Please try again.");
+                return;
+            }
+
+            // Convert response to blob and create an object URL
+            const imageBlob = await response.blob();
+            const imageUrl = URL.createObjectURL(imageBlob);
+
+            // Display the image
+            const imgElement = document.getElementById("generatedImage");
+            imgElement.src = imageUrl;
+            imgElement.style.display = "block";
+        }
+    </script>
+</body>
+</html>
